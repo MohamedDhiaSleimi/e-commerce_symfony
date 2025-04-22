@@ -26,6 +26,7 @@ class PurchaseController extends AbstractController {
         }
 
         // Only logged in users can checkout
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
         if ( !$user ) {
             $this->addFlash( 'warning', 'Please log in to checkout.' );
@@ -116,9 +117,10 @@ class PurchaseController extends AbstractController {
         if ( !$this->getUser() ) {
             return $this->redirectToRoute( 'app_login' );
         }
-
+        /** @var \App\Entity\User $temp */
+        $temp = $this->getUser();
         return $this->render( 'purchase/history.html.twig', [
-            'purchases' => $this->getUser()->getPurchases(),
+            'purchases' => ( $temp instanceof \App\Entity\User ) ? $temp->getPurchases() : [],
         ] );
     }
 
