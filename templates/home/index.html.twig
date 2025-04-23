@@ -63,7 +63,7 @@
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description|striptags|slice(0, 100) }}{% if product.description|length > 100 %}...{% endif %}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0">${{ product.price }}</span>
+                                <span class="h5 mb-0">{{ product.price }}0   DT</span>
                                 <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">View Details</a>
                             </div>
                         </div>
