@@ -1,20 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CategoryController!{% endblock %}
+{% block title %}All Categories - E-Commerce Store{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/user_one/Desktop/iset/l2_dsi3_isetR/tp_framework_s2/e-commerce/src/Controller/CategoryController.php</code></li>
-        <li>Your template at <code>C:/Users/user_one/Desktop/iset/l2_dsi3_isetR/tp_framework_s2/e-commerce/templates/category/index.html.twig</code></li>
-    </ul>
-</div>
+    <h1 class="mb-4">All Categories</h1>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for category in categories %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if category.image %}
+                        <img src="{{ asset('uploads/categories/' ~ category.image) }}" class="card-img-top" alt="{{ category.name }}">
+                    {% else %}
+                        <div class="placeholder-image bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-folder fa-3x text-secondary"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text">{{ category.description|striptags|slice(0, 150) }}{% if category.description|length > 150 %}...{% endif %}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a href="{{ path('app_category_show', {'slug': category.slug}) }}" class="btn btn-primary w-100">View Products</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No categories available at the moment.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
