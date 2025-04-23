@@ -32,9 +32,10 @@ class PurchaseItemFixture extends Fixture implements DependentFixtureInterface
         // For each user's purchase
         for ($userId = 1; $userId <= 20; $userId++) {
             // Each user will have 0-3 orders
-            $numOrders = random_int(0, 3);
+            $numOrders = 3;
             
             for ($orderId = 0; $orderId < $numOrders; $orderId++) {
+                // Get the purchase reference
                 $purchase = $this->getReference('purchase_' . $userId . '_' . $orderId, Purchase::class);
                 
                 // Each order will have 1-5 items

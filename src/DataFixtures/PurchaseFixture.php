@@ -21,7 +21,7 @@ class PurchaseFixture extends Fixture implements DependentFixtureInterface
         // Create purchases for regular users (not admin)
         for ($userId = 1; $userId <= 20; $userId++) {
             // Each user will have 0-3 orders
-            $numOrders = random_int(0, 3);
+            $numOrders = 3;
             
             for ($i = 0; $i < $numOrders; $i++) {
                 $purchase = new Purchase();
