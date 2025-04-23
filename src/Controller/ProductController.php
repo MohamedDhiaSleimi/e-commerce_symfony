@@ -46,8 +46,7 @@ class ProductController extends AbstractController
             return $p->getId() !== $product->getId() && $p->isIsActive();
         })->slice(0, 4); // Limit to 4 related products
         
-        return $this->render('product/show.html.twig', [
-            'product' => $product,
+        return $this->render('product/show.html.twig', [            'product' => $product,
             'relatedProducts' => $relatedProducts,
         ]);
     }
