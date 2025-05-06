@@ -40,7 +40,7 @@ class CartController extends AbstractController
     }
 
     /**
-     * Réduit de 1 la quantité pour un article du panier
+     * reduce the quantity of a product in the cart by 1
      * @param Cart $cart
      * @param int $id
      * @return Repsonse
@@ -53,8 +53,7 @@ class CartController extends AbstractController
     }
     
     /**
-     * Supprime une ligne d'articles du panier
-     *
+     * remove a product from the cart
      * @param Cart $cart
      * @return Response
      */
@@ -66,7 +65,7 @@ class CartController extends AbstractController
     }
 
     /**
-     * Vide le panier entièrement
+     * remove all products from the cart
      *
      * @param Cart $cart
      * @return Response

@@ -5,7 +5,7 @@ use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Permet de gérer un panier en session plutot que de tout implémenter dans le controller
+ * Allows managing a shopping cart in the session rather than implementing everything in the controller
  */
 class Cart 
 {
@@ -19,7 +19,7 @@ class Cart
 
 
     /**
-     * Crée un tableau associatif id => quantité et le stocke en session
+     * create an associative array in the session with the product id as key and the quantity as value
      *
      * @param int $id
      * @return void
@@ -39,7 +39,7 @@ class Cart
     }
 
     /**
-     * Récupère le panier en session
+     * get the cart from the session 
      *
      * @return array
      */
@@ -50,7 +50,7 @@ class Cart
 
 
     /**
-     * Supprime entièrement le panier en session
+     * remove the cart from the session
      *
      * @return void
      */
@@ -61,7 +61,7 @@ class Cart
 
 
     /**
-     * Supprime entièrement un produit du panier (quelque soit sa quantité)
+     * remove a product from the cart in the session
      *
      * @param int $id
      * @return void
@@ -75,7 +75,7 @@ class Cart
 
 
     /**
-     * Diminue de 1 la quantité d'un produit
+     * decrease the quantity of a product in the cart in the session by 1
      *
      * @param int $id
      * @return void
@@ -93,8 +93,8 @@ class Cart
 
 
     /**
-     * Récupère le panier en session, puis récupère les objets produits de la bdd
-     * et calcule les totaux
+     * get the cart details from the session and then gets the prices from the db and calculates the
+     * total price and quantity
      *
      * @return array
      */
