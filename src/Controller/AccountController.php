@@ -2,72 +2,90 @@
 
 namespace App\Controller;
 
-use App\Form\UserProfileType;
+use App\Entity\Order;
+use App\Entity\User;
+use App\Form\ChangePasswordType;
+use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-#[ Route( '/account' ) ]
 
-class AccountController extends AbstractController {
-    #[ Route( '/', name: 'app_account' ) ]
-
-    public function index(): Response {
-        // Only logged in users can access their account
-        if ( !$this->getUser() ) {
-            return $this->redirectToRoute( 'app_login' );
-        }
-
-        return $this->render( 'account/index.html.twig', [
-            'user' => $this->getUser(),
-        ] );
+/**
+ * member space 
+ */
+class AccountController extends AbstractController
+{
+    #[Route('/compte', name: 'account')]
+    public function index(): Response
+    {
+        return $this->render('account/index.html.twig', [
+        ]);
     }
 
-    #[ Route( '/profile', name: 'app_account_profile' ) ]
-
-    public function profile( Request $request, EntityManagerInterface $entityManager ): Response {
-        // Only logged in users can access their profile
+    /**
+     *  allow the modification of the password
+     */
+    #[Route('/compte/password', name: 'account_password')]
+    public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
+    {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        if ( !$user ) {
-            return $this->redirectToRoute( 'app_login' );
+        $form = $this->createForm(ChangePasswordType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $old_password = $form->get('old_password')->getData();
+            $new_password = $form->get('new_password')->getData();
+            $isOldPasswordValid = $passwordHasher->isPasswordValid($user, $old_password);
+            if ($isOldPasswordValid) {
+                $password = $passwordHasher->hashPassword($user,$new_password);
+                $user->setPassword($password);
+                $em->flush();
+                $this->addFlash(
+                    'notice', 
+                    'password modified successfully :)'
+                );
+                return $this->redirectToRoute('account');
+            } else {
+                $this->addFlash(
+                    'notice', 
+                    'current password is wrong:('
+                );
+            }
         }
 
-        $form = $this->createForm( UserProfileType::class, $user );
-        $form->handleRequest( $request );
+        return $this->renderForm('account/password.html.twig', [
+            'form' => $form
+        ]);
+    }
 
-        if ( $form->isSubmitted() && $form->isValid() ) {
-            $entityManager->flush();
+    /**
+     * show all the current orders of the user
+     */
+    #[Route('/compte/commandes', name: 'account_orders')]
+    public function showOrders(OrderRepository $repository): Response
+    {
+        $orders = $repository->findPaidOrdersByUser($this->getUser());
+        return $this->render('account/orders.html.twig', [
+            'orders' => $orders
+        ]);
+    }
 
-            $this->addFlash( 'success', 'Your profile has been updated!' );
-            return $this->redirectToRoute( 'app_account' );
+    /**
+     * show a specific order
+     */
+    #[Route('/compte/commandes/{reference}', name: 'account_order')]
+    public function showOrder(Order $order): Response
+    {
+        if (!$order || $order->getUser() != $this->getUser()) {
+            throw $this->createNotFoundException('Commande innaccessible');
         }
-
-        return $this->render( 'account/profile.html.twig', [
-            'form' => $form->createView(),
-        ] );
-    }
-
-    #[ Route( '/login', name: 'app_login' ) ]
-    public function login( AuthenticationUtils $authenticationUtils ): Response {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        return $this->render( 'security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
-        ] );
-    }
-
-    #[ Route( '/logout', name: 'app_logout' ) ]
-
-    public function logout(): void {
-        // This controller can be blank: it will be intercepted by the logout key on your firewall.
-        throw new \LogicException( 'This method can be blank - it will be intercepted by the logout key on your firewall.' );
+        return $this->render('account/order.html.twig', [
+            'order' => $order
+        ]);
     }
 }
