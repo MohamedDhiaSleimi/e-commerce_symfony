@@ -1,111 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Home - E-Commerce Store{% endblock %}
-
 {% block body %}
-    <!-- Hero Banner -->
-    <section class="hero-banner bg-light p-5 rounded-3 mb-4">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1>Welcome to Our E-Commerce Store</h1>
-                <p class="lead">Discover amazing products at competitive prices.</p>
-                <a href="{{ path('app_product_index') }}" class="btn btn-primary btn-lg">Shop Now</a>
-            </div>
-            <div class="col-lg-6">
-                <img src="{{ asset('images/banner.jpg') }}" alt="Shop Banner" class="img-fluid rounded">
-            </div>
-        </div>
-    </section>
+	<h3>Top ventes du moment</h3>
+	<p>Découvrez nos articles les plus vendus du mois dernier</p>
+	<div class="row">
+		{% for product in top_products %}
+			<div class="col-md-4">
+				<div class="product-item">
+					<a href="{{ path('product_show', {slug: product.slug}) }}"><img class="img-fluid" src="/uploads/{{product.image}}" alt="{{product.name}}"></a>
+					<h5 class="mt-2">{{ product.name}}</h5>
+					<span class="product-subtitle text-center">{{product.subtitle}}</span>
+					<span class="product-price text-center">{{(product.price / 100 )|number_format(2,',', '.')}}
+						DT
+					</span>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	<!-- /.row -->
 
-    <!-- Featured Categories -->
-    <section class="mb-5">
-        <h2 class="mb-4">Featured Categories</h2>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            {% for category in categories|slice(0, 4) %}
-                <div class="col">
-                    <div class="card h-100">
-                        {% if category.image %}
-                            <img src="{{ asset('uploads/categories/' ~ category.image) }}" class="card-img-top" alt="{{ category.name }}">
-                        {% else %}
-                            <div class="placeholder-image bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="fas fa-folder fa-3x text-secondary"></i>
-                            </div>
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ category.name }}</h5>
-                            <p class="card-text">{{ category.description|striptags|slice(0, 100) }}{% if category.description|length > 100 %}...{% endif %}</p>
-                            <a href="{{ path('app_category_show', {'slug': category.slug}) }}" class="btn btn-outline-primary">View Products</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="text-center mt-4">
-            <a href="{{ path('app_category_index') }}" class="btn btn-outline-primary">View All Categories</a>
-        </div>
-    </section>
+	<!-- START FEATURED SECTIONS -->
+	<hr class="featurette-divider">
 
-    <!-- Featured Products -->
-    <section class="mb-5">
-        <h2 class="mb-4">Featured Products</h2>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            {% for product in featuredProducts %}
-                <div class="col">
-                    <div class="card h-100">
-                        {% if product.images %}
-                            <img src="{{ asset('uploads/products/' ~ product.images) }}" class="card-img-top" alt="{{ product.name }}">
-                        {% else %}
-                            <div class="placeholder-image bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="fas fa-image fa-3x text-secondary"></i>
-                            </div>
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.description|striptags|slice(0, 100) }}{% if product.description|length > 100 %}...{% endif %}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0">{{ product.price }}0   DT</span>
-                                <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="text-center mt-4">
-            <a href="{{ path('app_product_index') }}" class="btn btn-outline-primary">View All Products</a>
-        </div>
-    </section>
+	<div class="row featurette d-flex align-items-center">
+		<div class="col-md-7">
+			<h2 class="featurette-heading">Don't miss our
+				<span class="text-muted">Autumn PC Deals</span>
+			</h2>
+			<p class="lead">
+				Upgrade your setup with our seasonal offers on processors, graphics cards, and more.
+							Enjoy reliable performance at great prices.
+			</p>
+		</div>
+		<div class="col-md-5 d-flex justify-content-center">
+			<img class="img-fluid" style="max-height: 400px; object-fit: contain;" src="{{ asset('assets/img/pc-setup.jpg') }}" alt="High-end PC setup">
+		</div>
+	</div>
 
-    <!-- Benefits -->
-    <section class="mb-5">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col">
-                <div class="card h-100 text-center p-3">
-                    <div class="card-body">
-                        <i class="fas fa-truck fa-3x text-primary mb-3"></i>
-                        <h4>Free Shipping</h4>
-                        <p>On orders over 50 DT</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100 text-center p-3">
-                    <div class="card-body">
-                        <i class="fas fa-undo fa-3x text-primary mb-3"></i>
-                        <h4>30-Day Returns</h4>
-                        <p>Hassle-free returns</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100 text-center p-3">
-                    <div class="card-body">
-                        <i class="fas fa-lock fa-3x text-primary mb-3"></i>
-                        <h4>Secure Payment</h4>
-                        <p>100% secure payment</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+	<hr class="featurette-divider">
+
+	<div class="row featurette d-flex align-items-center">
+		<div class="col-md-7 order-md-2">
+			<h2 class="featurette-heading">Exclusive Discounts on
+				<span class="text-muted">Gaming Gear</span>
+			</h2>
+			<p class="lead">
+				Grab limited-time offers on gaming keyboards, mice, and accessories to complete your battlestation.
+			</p>
+		</div>
+		<div class="col-md-5 order-md-1 d-flex justify-content-center">
+			<img class="img-fluid" style="max-height: 400px; object-fit: contain;" src="{{ asset('assets/img/gaming-gear.avif') }}" alt="Gaming peripherals">
+		</div>
+	</div>
+
+	<hr
+	class="featurette-divider">
+
+
+<!-- /END FEATURED SECTIONS -->
 {% endblock %}

@@ -1,16 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProductController!{% endblock %}
+{% block title %}{{ product.name }}{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>THIS IS UNIMPLEMENTED</h1>
-
-    
-</div>
+    <div class="row">
+        <div class="col-md-5">
+            <img class="img-fluid" src="/uploads/{{product.image}}" alt="{{product.name}}">
+        </div>
+        <div class="col-md-7 my-auto">
+            <h3>{{product.name}}</h3>
+            <p>{{product.subtitle}}</p>
+            <span class="product-price">{{(product.price / 100 )|number_format(2,',', '.')}} DT </span>
+            <hr>
+            <p>{{product.description}}</p>
+        <a href="{{ path('add_to_cart', {id: product.id}) }}"class="btn btn-outline-success">Ajouter au panier</a>
+        </div>
+    </div>   
 {% endblock %}

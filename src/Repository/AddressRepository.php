@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\PurchaseItem;
+use App\Entity\Address;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PurchaseItem>
+ * @extends ServiceEntityRepository<Address>
  */
-class PurchaseItemRepository extends ServiceEntityRepository
+class AddressRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PurchaseItem::class);
+        parent::__construct($registry, Address::class);
     }
 
     //    /**
-    //     * @return PurchaseItem[] Returns an array of PurchaseItem objects
+    //     * @return Address[] Returns an array of Address objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('a')
+    //            ->andWhere('a.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
+    //            ->orderBy('a.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?PurchaseItem
+    //    public function findOneBySomeField($value): ?Address
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('a')
+    //            ->andWhere('a.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

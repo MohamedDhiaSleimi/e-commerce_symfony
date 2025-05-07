@@ -1,21 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Account{% endblock %}
+{% block title %}my account _ e-commerce{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h2 class="card-title mb-4">Welcome, {{ user.firstName }} {{ user.lastName }}</h2>
-
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
-                <li class="list-group-item"><strong>Address:</strong> {{ user.address ?: 'Not provided' }}</li>
-                <li class="list-group-item"><strong>Phone Number:</strong> {{ user.phoneNumber ?: 'Not provided' }}</li>
-            </ul>
-
-            <a href="{{ path('app_account_profile') }}" class="btn btn-primary mt-4">Edit Profile</a>
+    <h2>Mon compte</h2>
+    Bienvenue dans votre espace membre {{ app.user.firstname }}.
+    <hr>
+    {% for message in app.flashes('notice') %}
+        <div class="alert alert-success">
+            {{ message }}
         </div>
+    {% endfor %}
+    <div class="list-group">
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('admin') }}" class="list-group-item list-group-item-action">
+            Back office
+        </a> 
+        {% endif %}
+        <a href="{{ path('account_orders') }}" class="list-group-item list-group-item-action">
+            Mes commandes
+        </a>
+       
+        <a href="{{ path('account_password') }}" class="list-group-item list-group-item-action">
+            Modifier mot de passe
+        </a>
     </div>
-</div>
+
+
 {% endblock %}

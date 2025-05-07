@@ -8,55 +8,46 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity('email', "Cet email est déja pris")]
+#[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    #[ORM\Column(length: 180)]
-    private ?string $email = null;
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Assert\NotBlank]
+    private $email;
 
-    /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\Column(type: 'json')]
+    private $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\Column(type: 'string')]
+    private $password;
 
-    #[ORM\Column(length: 255)]
-    private ?string $firstName = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Length(null, 3)]
+    private $firstname;
 
-    #[ORM\Column(length: 255)]
-    private ?string $lastName = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private $lastname;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $address = null;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Address::class)]
+    private $addresses;
 
-    #[ORM\Column(length: 20, nullable: true)]
-    private ?string $phoneNumber = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    /**
-     * @var Collection<int, Purchase>
-     */
-    #[ORM\OneToMany(targetEntity: Purchase::class, mappedBy: 'user')]
-    private Collection $purchases;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
+    private $orders;
 
     public function __construct()
     {
-        $this->purchases = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -88,8 +79,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
-     *
-     * @return list<string>
      */
     public function getRoles(): array
     {
@@ -100,10 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
@@ -113,16 +99,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * if gonna use a modern hashing algorithme
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
+    {
+        return null;
     }
 
     /**
@@ -134,93 +130,93 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getFirstName(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->firstName;
+        return $this->firstname;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstname(string $firstname): self
     {
-        $this->firstName = $firstName;
+        $this->firstname = $firstname;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getLastname(): ?string
     {
-        return $this->lastName;
+        return $this->lastname;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastname(string $lastname): self
     {
-        $this->lastName = $lastName;
+        $this->lastname = $lastname;
 
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getFullName(): ?string
     {
-        return $this->address;
-    }
-
-    public function setAddress(?string $address): static
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function setPhoneNumber(?string $phoneNumber): static
-    {
-        $this->phoneNumber = $phoneNumber;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
+        return $this->firstname . ' ' . $this->lastname;
     }
 
     /**
-     * @return Collection<int, Purchase>
+     * @return Collection|Address[]
      */
-    public function getPurchases(): Collection
+    public function getAddresses(): Collection
     {
-        return $this->purchases;
+        return $this->addresses;
     }
 
-    public function addPurchase(Purchase $purchase): static
+    public function addAddress(Address $address): self
     {
-        if (!$this->purchases->contains($purchase)) {
-            $this->purchases->add($purchase);
-            $purchase->setUser($this);
+        if (!$this->addresses->contains($address)) {
+            $this->addresses[] = $address;
+            $address->setUser($this);
         }
 
         return $this;
     }
 
-    public function removePurchase(Purchase $purchase): static
+    public function removeAddress(Address $address): self
     {
-        if ($this->purchases->removeElement($purchase)) {
+        if ($this->addresses->removeElement($address)) {
             // set the owning side to null (unless already changed)
-            if ($purchase->getUser() === $this) {
-                $purchase->setUser(null);
+            if ($address->getUser() === $this) {
+                $address->setUser(null);
             }
         }
 
         return $this;
     }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

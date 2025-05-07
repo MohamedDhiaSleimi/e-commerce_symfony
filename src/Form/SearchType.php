@@ -51,7 +51,7 @@ class SearchType extends AbstractType
                 'expanded' => true,
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Valider',
+                'label' => 'search',
                 'attr' => [
                     'class' => 'btn btn-outline-info w-100'
                 ]

@@ -2,6 +2,7 @@
 namespace App\Model;
 
 use App\Repository\ProductRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -9,13 +10,15 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Cart 
 {
-    private $session;
-
-    public function __construct(SessionInterface $session, ProductRepository $repository)
+    private SessionInterface $session;
+    private ProductRepository $repository;
+    
+    public function __construct(RequestStack $requestStack, ProductRepository $repository)
     {
-        $this->session = $session;
+        $this->session = $requestStack->getSession();
         $this->repository = $repository;
     }
+    
 
 
     /**

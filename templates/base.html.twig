@@ -1,130 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Une boutique géniale, avec pleins d'articles géniaux et beau et tout...">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.1.1">
     <title>{% block title %}E-Commerce Store{% endblock %}</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('styles/main.css') }}">
-    {% block stylesheets %}{% endblock %}
+
+    <link href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/css/carousel.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
-                <a class="navbar-brand" href="{{ path('app_home') }}">E-Commerce Store</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarMain">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_product_index') }}">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_category_index') }}">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_about') }}">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_contact') }}">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex align-items-center">
-                        <form class="d-flex me-2" action="{{ path('app_product_search') }}" method="get">
-                            <input class="form-control me-2" type="search" name="q" placeholder="Search products..." aria-label="Search">
-                            <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
-                        </form>
-                        <a href="{{ path('app_cart') }}" class="btn btn-outline-light me-2">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="cart-count">
-                                {% if app.session.get('cart') is defined and app.session.get('cart') is not null %}
-                                    {{ app.session.get('cart')|length }}
-                                {% else %}
-                                    0
-                                {% endif %}
-                            </span>
-                        </a>
-                        {% if app.user %}
-                            <div class="dropdown">
-                                <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ app.user.firstName }}
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" href="{{ path('app_account') }}">My Account</a></li>
-                                    <li><a class="dropdown-item" href="{{ path('app_purchase_history') }}">Order History</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a></li>
-                                </ul>
-                            </div>
-                        {% else %}
-                            <a href="{{ path('app_login') }}" class="btn btn-outline-light">Login</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </nav>
+        {% include "_nav.html.twig" %}
     </header>
 
-    <main class="container my-4">
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
-
-        {% block body %}{% endblock %}
-    </main>
-
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>E-Commerce Store</h5>
-                    <p>Your one-stop shop for quality products.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ path('app_home') }}" class="text-white">Home</a></li>
-                        <li><a href="{{ path('app_product_index') }}" class="text-white">Products</a></li>
-                        <li><a href="{{ path('app_about') }}" class="text-white">About</a></li>
-                        <li><a href="{{ path('app_contact') }}" class="text-white">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contact Us</h5>
-                    <address>
-                        <i class="fas fa-map-marker-alt"></i> 123 E-Commerce St, City<br>
-                        <i class="fas fa-phone"></i> (123) 456-7890<br>
-                        <i class="fas fa-envelope"></i> info@ecommerce.com
-                    </address>
-                </div>
-            </div>
-            <hr>
-            <div class="text-center">
-                <p class="mb-0">&copy; {% if 'now'|date('Y') == '2023' %}2023{% else %}2023-{{ 'now'|date('Y') }}{% endif %} E-Commerce Store. All rights reserved.</p>
-            </div>
+    <main class="mb-5" role="main">
+        {% if carousel is defined %}
+            {% include "_carousel.html.twig" %}
+        {% else %}
+            {% set margin = 'mt-5' %}
+        {% endif %}
+        <div class="container {{margin ?? 0}}">
+            {% block body %}{% endblock %}
         </div>
-    </footer>
-
-    <!-- Bootstrap JS with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery (for AJAX) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Custom JS -->
-    <script src="{{ asset('js/main.js') }}"></script>
-    {% block javascripts %}{% endblock %}
+    </main>
+        <footer class="footer-custom">
+            {% include "_footer.html.twig" %}
+        </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="{{asset('assets/js/bootstrap.bundle.js')}}"></script>
 </body>
 </html>
